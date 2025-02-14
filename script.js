@@ -8,6 +8,21 @@ let room = false;
 let currentRoom = 0;
 let timer = 60; // 60 seconds time limit
 
+const images = {
+    'Living Room': new Image(),
+    'Kitchen': new Image(),
+    'Bedroom': new Image(),
+    'Bookshelf': new Image(),
+    'Knife': new Image(),
+    'Diary': new Image(),
+};
+images['Living Room'].src = 'images/living_room.jpg';
+images['Kitchen'].src = 'images/kitchen.jpg';
+images['Bedroom'].src = 'images/bedroom.jpg';
+images['Bookshelf'].src = 'images/bookshelf.jpg';
+images['Knife'].src = 'images/knife.jpg';
+images['Diary'].src = 'images/diary.jpg';
+
 const rooms = [
     {
         name: 'Living Room',
@@ -17,7 +32,7 @@ const rooms = [
             { x: 400, y: 400, found: false, hidden: true, condition: 'checkBookshelf' },
         ],
         objects: [
-            { x: 400, y: 450, width: 50, height: 50, description: 'A suspicious bookshelf.', action: 'checkBookshelf' },
+            { x: 400, y: 450, width: 50, height: 50, description: 'A suspicious bookshelf.', action: 'checkBookshelf', image: 'Bookshelf' },
         ],
     },
     {
@@ -28,7 +43,7 @@ const rooms = [
             { x: 300, y: 350, found: false, hidden: true, condition: 'examineKnife' },
         ],
         objects: [
-            { x: 350, y: 400, width: 50, height: 50, description: 'A shiny knife on the counter.', action: 'examineKnife' },
+            { x: 350, y: 400, width: 50, height: 50, description: 'A shiny knife on the counter.', action: 'examineKnife', image: 'Knife' },
         ],
     },
     {
@@ -39,7 +54,7 @@ const rooms = [
             { x: 500, y: 350, found: false, hidden: true, condition: 'readDiary' },
         ],
         objects: [
-            { x: 450, y: 350, width: 50, height: 50, description: 'A diary with a torn page.', action: 'readDiary' },
+            { x: 450, y: 350, width: 50, height: 50, description: 'A diary with a torn page.', action: 'readDiary', image: 'Diary' },
         ],
     },
 ];
@@ -72,9 +87,14 @@ canvas.addEventListener('click', (event) => {
 });
 
 function drawText(text, x, y) {
-    ctx.fillStyle = 'white';
-    ctx.font = '20px "Press Start 2P"';
+    ctx.fillStyle = 'black';
+    ctx.font = '20px Arial';
     ctx.fillText(text, x, y);
+}
+
+function drawRoom() {
+    const room = rooms[currentRoom];
+    ctx.drawImage(images[room.name], 0, 0, canvas.width, canvas.height);
 }
 
 function drawClues() {
@@ -90,8 +110,7 @@ function drawClues() {
 function drawObjects() {
     const room = rooms[currentRoom];
     for (const obj of room.objects) {
-        ctx.strokeStyle = 'blue';
-        ctx.strokeRect(obj.x, obj.y, obj.width, obj.height);
+        ctx.drawImage(images[obj.image], obj.x, obj.y, obj.width, obj.height);
     }
 }
 
@@ -156,9 +175,10 @@ function gameLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     if (intro) {
-        drawText('Welcome to the 8-Bit Murder Mystery Game!', 50, 100);
+        drawText('Welcome to the Realistic Murder Mystery Game!', 50, 100);
         drawText('Press SPACE to start your investigation.', 50, 150);
     } else if (room) {
+        drawRoom();
         drawText(`Clues found: ${cluesFound}/${totalClues}`, 10, 20);
         drawText(`Time left: ${timer}s`, 10, 50);
         drawText(`Current Room: ${rooms[currentRoom].name}`, 10, 80);
@@ -176,4 +196,3 @@ function gameLoop() {
 }
 
 gameLoop();
-
